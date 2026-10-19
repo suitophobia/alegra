@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://alegra.travel/sitemap.xml
+Sitemap: https://alegra.travel/sitemap-index.xml
