@@ -7,7 +7,7 @@ export function useCreateInquiry() {
 
   return useMutation({
     mutationFn: async (data: InsertInquiry) => {
-      const res = await fetch("https://formsubmit.co/ajax/hello@alegra.travel", {
+      const res = await fetch("https://formsubmit.co/ajax/7ae28a33e1a172d364b1cadbaf69974b", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
