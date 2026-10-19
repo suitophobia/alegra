@@ -1,4 +1,5 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Router } from "wouter";
+import { useBrowserLocation } from "wouter/use-browser-location";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -17,6 +18,12 @@ import PlanJourney from "@/pages/Contact";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 
+const useNormalizedLocation = () => {
+  const [location, navigate] = useBrowserLocation();
+  const normalized = location.length > 1 ? location.replace(/\/+$/, "") : location;
+  return [normalized, navigate] as ReturnType<typeof useBrowserLocation>;
+};
+
 function ScrollToTop() {
   const [pathname] = useLocation();
   useEffect(() => {
@@ -25,7 +32,7 @@ function ScrollToTop() {
   return null;
 }
 
-function Router() {
+function AppRoutes() {
   return (
     <div className="flex flex-col min-h-screen">
       <ScrollToTop />
@@ -52,7 +59,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <Router hook={useNormalizedLocation}>
+          <AppRoutes />
+        </Router>
       </TooltipProvider>
     </QueryClientProvider>
   );

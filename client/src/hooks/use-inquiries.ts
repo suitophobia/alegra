@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { api, type InsertInquiry } from "@shared/routes";
+import type { InsertInquiry } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
 export function useCreateInquiry() {
@@ -7,15 +7,28 @@ export function useCreateInquiry() {
 
   return useMutation({
     mutationFn: async (data: InsertInquiry) => {
-      const res = await fetch(api.inquiries.create.path, {
-        method: api.inquiries.create.method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const res = await fetch("https://formsubmit.co/ajax/hello@alegra.travel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          journey: data.packageName || "Not specified",
+          adults: data.numberOfAdults,
+          children: data.numberOfChildren,
+          message: data.message,
+          _subject: "New journey inquiry from alegra.travel",
+          _template: "table",
+          _captcha: "false",
+          _replyto: data.email,
+        }),
       });
 
       if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to send inquiry");
+        throw new Error("Failed to send inquiry");
       }
 
       return res.json();

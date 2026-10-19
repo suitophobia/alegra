@@ -1,26 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
-import { api, buildUrl } from "@shared/routes";
+import type { Post } from "@shared/schema";
+
+async function loadPosts(): Promise<Post[]> {
+  const res = await fetch("/data/posts.json");
+  if (!res.ok) throw new Error("Failed to fetch posts");
+  return res.json();
+}
 
 export function usePosts() {
   return useQuery({
-    queryKey: [api.posts.list.path],
-    queryFn: async () => {
-      const res = await fetch(api.posts.list.path);
-      if (!res.ok) throw new Error("Failed to fetch posts");
-      return res.json();
-    },
+    queryKey: ["/data/posts.json"],
+    queryFn: loadPosts,
   });
 }
 
 export function usePost(slug: string) {
   return useQuery({
-    queryKey: [api.posts.get.path, slug],
+    queryKey: ["/data/posts.json", slug],
     queryFn: async () => {
-      const url = buildUrl(api.posts.get.path, { slug });
-      const res = await fetch(url);
-      if (res.status === 404) return null;
-      if (!res.ok) throw new Error("Failed to fetch post");
-      return res.json();
+      const posts = await loadPosts();
+      return posts.find((post) => post.slug === slug) ?? null;
     },
     enabled: !!slug,
   });
